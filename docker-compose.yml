@@ -1,0 +1,15 @@
+version: '2'
+
+services:
+
+ socket-io-broadcaster:
+  container_name: socket-io-broadcaster
+  image: cismet/sockets.cismet.de:latest
+  network_mode: bridge
+  ports:
+   - 3001:3001
+  volumes:
+   - ./config.json:/usr/src/app/config.json:ro
+  restart: always
+  ## the default command will run rasterfari with 20 threads
+  command: yarn start

@@ -18,23 +18,23 @@ fs.readFile('./config.json', (err, data) => {
 });
 
 const DEFAULT_SETTINGS = {
-	port: 3001,
 	opening_secret: 'abracadabra',
 	channel_timeout_seconds: 10
 };
 const openChannels = [];
 
 const service = (settings = DEFAULT_SETTINGS) => {
-	http.listen(settings.port, function() {
-		console.log('listening on *:3000');
+	http.listen(settings.port || 3001, function() {
+		console.log('listening on *:3001');
 	});
 	io.on('connection', function(socket) {
 		console.log('user connected');
 		socket.on('open', (message) => {
-			console.log('someone tries to open', message.channels);
-			if (message.secret === settings.opening_secret) {
-				console.log('access granted for ', message.channels);
-				(message.channels || []).forEach((channel) => {
+			const parsedMessage = JSON.parse(message);
+			console.log('someone tries to open', parsedMessage.channels);
+			if (parsedMessage.secret === settings.opening_secret) {
+				console.log('access granted for ', parsedMessage.channels);
+				(parsedMessage.channels || []).forEach((channel) => {
 					openChannels.push(channel);
 					console.log('access granted for:', channel);
 
@@ -44,7 +44,7 @@ const service = (settings = DEFAULT_SETTINGS) => {
 					});
 				});
 				setTimeout(() => {
-					(message.channels || []).forEach((channel) => {
+					(parsedMessage.channels || []).forEach((channel) => {
 						socket.removeAllListeners(channel);
 						let i = openChannels.indexOf(channel);
 						if (i >= 0) {
@@ -52,9 +52,9 @@ const service = (settings = DEFAULT_SETTINGS) => {
 							console.log('removed channel ' + channel + ' from open channels list.');
 						}
 					});
-				}, 1000 * (message.timeoutS || settings.channel_timeout_seconds));
+				}, 1000 * (parsedMessage.timeoutS || settings.channel_timeout_seconds));
 			} else {
-				console.log('access denied for ', message.channels);
+				console.log('access denied for ', parsedMessage.channels);
 			}
 		});
 	});

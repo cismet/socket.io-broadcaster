@@ -1,0 +1,24 @@
+{
+  "name": "sockets.cismet.de",
+  "config": {
+    "dockerRegistryPath": "cismet"
+  },
+  "description": "A universal socket.io service for cross platform/cross software communication",
+  "main": "server.js",
+  "author": "helllth",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
+  },
+  "scripts": {
+    "start": "node ./server.js",
+    "start-dev": "./node_modules/nodemon/bin/nodemon.js ./server.js",
+    "postversion": "sed '/^.*\"version\":.*$/d' package.json > .package.json.without.version && echo $npm_package_version > .version && git rev-parse HEAD > .githash",
+    "build:docker": "VERSION=`echo $npm_package_version| sed 's/\\.[0-9]*-SNAPSHOT.*$/-SNAPSHOT/'`; docker build  -t cismet/$npm_package_name -t cismet/$npm_package_name:$VERSION .",
+    "publish:docker": "npm run build:docker; VERSION=`echo $npm_package_version| sed 's/\\.[0-9]*-SNAPSHOT.*$/-SNAPSHOT/'`; docker tag cismet/$npm_package_name:$VERSION $npm_package_config_dockerRegistryPath/$npm_package_name:$VERSION && docker push $npm_package_config_dockerRegistryPath/$npm_package_name:$VERSION"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.4"
+  }
+}
