@@ -1,0 +1,19 @@
+{
+  "name": "sockets.cismet.de",
+  "version": "0.0.1",
+  "description": "A universal socket.io service for cross platform/cross software communication",
+  "main": "server.js",
+  "author": "helllth",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
+  },
+  "scripts": {
+    "start": "node ./server.js",
+    "start-dev": "./node_modules/nodemon/bin/nodemon.js ./server.js"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.4"
+  }
+}
